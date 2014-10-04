@@ -1,4 +1,4 @@
-﻿namespace RemoteWindowsAdministrator {
+﻿namespace NotificationWindow {
 	partial class NotificationWindow {
 		/// <summary>
 		/// Required designer variable.

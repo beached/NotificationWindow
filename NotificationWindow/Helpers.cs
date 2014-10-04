@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Microsoft.Contracts;
 
 namespace NotificationWindow {
 	public class Helpers {
@@ -19,18 +14,15 @@ namespace NotificationWindow {
 			}
 		}
 
-		
-	}
-	
-	public static class Extension {
-		public static void RemoveAll<T>( this BindingList<T> values, Predicate<T> predicate ) {
-			var itemsToRemove = new List<int>( );
-			for( var n = values.Count - 1; n >= 0; --n ) {
-				if( predicate( values[n] ) ) {
-					values.RemoveAt( n );
-				}
-			}
-
+		public static DataGridViewColumn MakeColumn( string propertyName, string headerName = null, bool hidden = false, bool canSort = true, bool readOnly = true ) {
+			return new DataGridViewColumn {
+				Name = propertyName, HeaderText = (headerName ?? propertyName), ReadOnly = readOnly, DataPropertyName = propertyName, SortMode = (canSort ? DataGridViewColumnSortMode.Automatic : DataGridViewColumnSortMode.NotSortable), CellTemplate = new DataGridViewTextBoxCell( ), Visible = !hidden
+			};
 		}
-	}
+
+		public static void AddColumn( DataGridView dgv, string propertName, string headerName = null, bool hidden = false, bool canSort = true, bool readOnly = true ) {
+			dgv.Columns.Add( MakeColumn( propertName, headerName, hidden, canSort, readOnly ) );
+		}
+		
+	}	
 }

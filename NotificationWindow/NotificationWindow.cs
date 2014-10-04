@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
+﻿using System;
 using System.Threading;
-using System;
 using System.Timers;
 using System.Windows.Forms;
-using NotificationWindow;
+using SyncList;
 
-namespace RemoteWindowsAdministrator {
+namespace NotificationWindow {
 	public partial class NotificationWindow: Form {
 		internal class NotificationMessage {
 			public string Message {
@@ -37,7 +34,7 @@ namespace RemoteWindowsAdministrator {
 
 		private NotificationWindow( ) {
 			InitializeComponent( );
-			this.FormBorderStyle = FormBorderStyle.None;
+			FormBorderStyle = FormBorderStyle.None;
 			dgvMessages.AllowUserToAddRows = false;
 			dgvMessages.AllowUserToDeleteRows = false;
 			dgvMessages.AllowUserToOrderColumns = false;
@@ -46,13 +43,11 @@ namespace RemoteWindowsAdministrator {
 			dgvMessages.RowHeadersVisible = false;
 			dgvMessages.ColumnHeadersVisible = false;
 			dgvMessages.AutoGenerateColumns = false;
-			dgvMessages.Columns.Add( new DataGridViewColumn {Name = @"Message", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill} );
-			_messages = new BindingList<NotificationMessage>( );
+			Helpers.AddColumn( dgvMessages, @"Message" );
+			_messages = new SyncList<NotificationMessage>( this );
 
-			dgvMessages.Click += delegate( object sender, EventArgs e ) {
-				InvokeIfNeeded( ( ) => {
-					CloseForm( 1000 );
-				} );
+			dgvMessages.Click += delegate {
+				InvokeIfNeeded( ( ) => CloseForm( 1000 ) );
 			};
 
 			dgvMessages.DataSource = _messages;
@@ -67,7 +62,7 @@ namespace RemoteWindowsAdministrator {
 		}
 
 
-		private static BindingList<NotificationMessage> _messages;
+		private static SyncList<NotificationMessage> _messages;
 		private static NotificationWindow _window;
 		private System.Timers.Timer _timer;
 		private static string _lock = @"IAMLOCKED";
@@ -84,16 +79,6 @@ namespace RemoteWindowsAdministrator {
 			}
 		}
 
-// 		public static void RemoveAll<T>( BindingList<T> values, Predicate<T> predicate ) {
-// 			var itemsToRemove = new List<int>( );
-// 			for( var n = values.Count - 1; n >= 0; --n ) {
-// 				if( predicate( values[n] ) ) {
-// 					values.RemoveAt( n );
-// 				}
-// 			}
-// 
-// 		}
-// 
 		private void ShouldIStayOpen( Object source, ElapsedEventArgs e ) {
 			var messagesLeft = CleanMessages( 3 );
 			if( 0 != messagesLeft || null == _window ) {
