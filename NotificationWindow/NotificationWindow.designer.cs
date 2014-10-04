@@ -61,6 +61,7 @@
 			this.Text = "NotificationWindow";
 			this.TopMost = true;
 			this.Load += new System.EventHandler(this.NotificationWindow_Load);
+			this.Shown += new System.EventHandler(this.NotificationWindow_Shown);
 			((System.ComponentModel.ISupportInitialize)(this.dgvMessages)).EndInit();
 			this.ResumeLayout(false);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -37,6 +38,13 @@ namespace NotificationWindow {
 		private NotificationWindow( ) {
 			InitializeComponent( );
 			FormBorderStyle = FormBorderStyle.None;
+			SetupDataGridView( );
+
+			_messages = new SyncList<NotificationMessage>( this );
+			dgvMessages.DataSource = _messages;
+		}
+
+		private void SetupDataGridView( ) {
 			dgvMessages.AllowUserToAddRows = false;
 			dgvMessages.AllowUserToDeleteRows = false;
 			dgvMessages.AllowUserToOrderColumns = false;
@@ -45,26 +53,25 @@ namespace NotificationWindow {
 			dgvMessages.RowHeadersVisible = false;
 			dgvMessages.ColumnHeadersVisible = false;
 			dgvMessages.AutoGenerateColumns = false;
-			Helpers.AddColumn( dgvMessages, @"Message" );
-			_messages = new SyncList<NotificationMessage>( this );
+			
+			{
+				var column = Helpers.MakeColumn( @"Message" );
+				column.DefaultCellStyle.Font = new Font( FontFamily.GenericSansSerif, 16 );
+				dgvMessages.Columns.Add( column );
+			}
 
-			dgvMessages.Click += delegate {
+			dgvMessages.Click += delegate {		// If use click on window, close
 				InvokeIfNeeded( ( ) => CloseForm( 250 ) );
 			};
-
-			dgvMessages.DataSource = _messages;
-			_timer = new System.Timers.Timer( 1000 );
-			_timer.Elapsed += ShouldIStayOpen;
-			_timer.Enabled = true;
 		}
 
 		private void ShouldIStayOpen( Object source, ElapsedEventArgs e ) {
-			var messagesLeft = CleanMessages( 3 );
+			var messagesLeft = CleanMessages( 4 );
 			if( 0 != messagesLeft || null == _window ) {
 				_timer.Enabled = true;
 				return;
 			}
-			_window.CloseForm( 1500 );
+			_window.CloseForm( 1000 );
 			_window = null;
 		}
 
@@ -104,6 +111,12 @@ namespace NotificationWindow {
 			SetBottom( Screen.GetWorkingArea( this ).Bottom );
 		}
 
+		private void NotificationWindow_Shown( object sender, EventArgs e ) {
+			_timer = new System.Timers.Timer( 1000 );
+			_timer.Elapsed += ShouldIStayOpen;
+			_timer.Enabled = true;
+		}
+		
 		private static int CleanMessages( int maxAgeSeconds ) {
 			if( null == _messages ) {
 				return 0;
@@ -162,7 +175,6 @@ namespace NotificationWindow {
 		private void SetOpacity( double percentOpac ) {
 			InvokeIfNeeded( ( ) => { Opacity = percentOpac; } );
 		}
-
 	}
 
 
