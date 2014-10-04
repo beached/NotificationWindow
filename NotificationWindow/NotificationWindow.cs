@@ -6,12 +6,14 @@ using SyncList;
 
 namespace NotificationWindow {
 	public partial class NotificationWindow: Form {
-		internal class NotificationMessage {
-			public string Message {
-				get;
-				private set;
-			}
+		private static SyncList<NotificationMessage> _messages;
+		private static NotificationWindow _window;
+		private System.Timers.Timer _timer;
+		private static string _lock = @"IAMLOCKED";
 
+		internal class NotificationMessage {
+			public string Message { get; private set; }
+			
 			private readonly DateTime _timestamp;
 			public DateTime Timestamp { get { return _timestamp; } }
 
@@ -47,7 +49,7 @@ namespace NotificationWindow {
 			_messages = new SyncList<NotificationMessage>( this );
 
 			dgvMessages.Click += delegate {
-				InvokeIfNeeded( ( ) => CloseForm( 1000 ) );
+				InvokeIfNeeded( ( ) => CloseForm( 250 ) );
 			};
 
 			dgvMessages.DataSource = _messages;
@@ -56,17 +58,51 @@ namespace NotificationWindow {
 			_timer.Enabled = true;
 		}
 
+		private void ShouldIStayOpen( Object source, ElapsedEventArgs e ) {
+			var messagesLeft = CleanMessages( 3 );
+			if( 0 != messagesLeft || null == _window ) {
+				_timer.Enabled = true;
+				return;
+			}
+			_window.CloseForm( 1500 );
+			_window = null;
+		}
+
+		private void CloseForm( int millisecondsToClose = 0 ) {
+			new Thread( ( ) => {
+				lock( _lock ) {
+					if( null != _messages && 0 < _messages.Count ) {
+						_messages.Clear( );
+						_messages = null;
+					}
+				}
+				FadeAway( millisecondsToClose );
+				//Shrink( 5, 5, true );
+				InvokeIfNeeded( ( ) => {
+					Close( );
+					Dispose( );
+				} );
+			} ).Start( );
+		}
+
+		private void FadeAway( int millisecondsToWork ) {
+			if( 0 == millisecondsToWork ) {
+				SetOpacity( 0.0 );
+				return;
+			}
+			var timeBetweenFrames = (int)(millisecondsToWork / 100.0);			
+			while( Opacity > 0 ) {
+				SetOpacity( Opacity - 0.01 );
+				Thread.Sleep( timeBetweenFrames );
+				timeBetweenFrames = timeBetweenFrames % 2 == 0 ? timeBetweenFrames - 1 : timeBetweenFrames;
+				timeBetweenFrames = timeBetweenFrames >= 0 ? timeBetweenFrames : 0;
+			}
+		}
+
 		private void NotificationWindow_Load( object sender, EventArgs e ) {
 			SetRight( Screen.GetBounds( this ).Right );
 			SetBottom( Screen.GetWorkingArea( this ).Bottom );
 		}
-
-
-		private static SyncList<NotificationMessage> _messages;
-		private static NotificationWindow _window;
-		private System.Timers.Timer _timer;
-		private static string _lock = @"IAMLOCKED";
-
 
 		private static int CleanMessages( int maxAgeSeconds ) {
 			if( null == _messages ) {
@@ -77,16 +113,6 @@ namespace NotificationWindow {
 				_messages.RemoveAll( message => (now - message.Timestamp).TotalSeconds >= maxAgeSeconds );
 				return _messages.Count;
 			}
-		}
-
-		private void ShouldIStayOpen( Object source, ElapsedEventArgs e ) {
-			var messagesLeft = CleanMessages( 3 );
-			if( 0 != messagesLeft || null == _window ) {
-				_timer.Enabled = true;
-				return;
-			}
-			_window.CloseForm( );
-			_window = null;
 		}
 
 		private void InvokeIfNeeded( Action action ) {
@@ -137,31 +163,6 @@ namespace NotificationWindow {
 			InvokeIfNeeded( ( ) => { Opacity = percentOpac; } );
 		}
 
-		private void FadeAway( int millisecondsToWork ) {
-			var timeBetweenFrames = (int)(millisecondsToWork / 100.0);
-			while( Opacity >= 0 ) {
-				SetOpacity( Opacity - 0.01 );
-				Thread.Sleep( timeBetweenFrames );
-				timeBetweenFrames = timeBetweenFrames % 2 == 0 ? timeBetweenFrames - 1 : timeBetweenFrames;
-			}
-		}
-
-		private void CloseForm( int millisecondsToClose = 0 ) {
-			new Thread( ( ) => {
-				lock( _lock ) {
-					if( null != _messages && 0 < _messages.Count ) {
-						_messages.Clear( );
-						_messages = null;
-					}
-				}
-				FadeAway( millisecondsToClose );
-				//Shrink( 5, 5, true );
-				InvokeIfNeeded( ( ) => {
-					Close( );
-					Dispose( );
-				} );
-			} ).Start( );
-		}
 	}
 
 
