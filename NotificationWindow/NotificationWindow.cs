@@ -153,11 +153,6 @@ namespace NotificationWindow {
 			} );			
 		}
 
-		private void CloseForm( ) {
-			ShutdownMessages( );
-			Close( );
-		}
-
 		private void CloseForm( int millisecondsToClose ) {
 			ShutdownMessages( );
 			FadeAway( millisecondsToClose );
@@ -212,7 +207,7 @@ namespace NotificationWindow {
 		// Static Methods	
 		private static void AddMessageToQueue( NotificationMessage.NotificationType messageType, string messageFormat, params object[] messageValues ) {
 			var message = string.Format( messageFormat, messageValues );
-			new Thread( ( ) => WithMessage( ( ) => _messages.Add( new NotificationMessage( message, messageType ) ) ) ).Start( );
+			WithMessage( ( ) => _messages.Add( new NotificationMessage( message, messageType ) ) );
 		}
 
 		private static void CreateWindowIfNeeded( ) {
