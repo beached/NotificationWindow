@@ -17,8 +17,7 @@ namespace NotificationWindow {
 
 		public static void AddColumn( DataGridView dgv, string propertName, string headerName = null, bool hidden = false, bool canSort = true, bool readOnly = true ) {
 			dgv.Columns.Add( MakeColumn( propertName, headerName, hidden, canSort, readOnly ) );
-		}
-		
+		}		
 	}
 
 	[Serializable]
