@@ -1,4 +1,4 @@
-﻿using System.Timers;
+﻿using System.Security.Permissions;
 using SyncList;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace NotificationWindow {
@@ -57,14 +58,14 @@ namespace NotificationWindow {
 			AddMessage( NotificationMessage.NotificationType.Message, format, values );
 		}
 
-		private static void AddMessage( NotificationMessage.NotificationType messageType, string messageFormat, params object[] messageValues ) {
+		private static void AddMessage( NotificationMessage.NotificationType messageType, string messageFormat, params object[] messageValues ) {			
 			try {
-				CreateWindowIfNeeded( );
+				CreateWindowIfNeeded( );				
 				AddMessageToQueue( messageType, messageFormat, messageValues );
 				SetWindowColour( );
 			} catch( Exception ex ) {
 				Debug.WriteLine( string.Format( @"Error adding message. {0}", ex.Message ) );
-				OnWindow( window => window.CloseForm( 0 ) );
+				OnWindow( window => window.CloseForm( ) );
 			}
 		}
 
@@ -81,6 +82,31 @@ namespace NotificationWindow {
 			set {
 				Helpers.Assert( 0 <= value, @"Bottom must be at least 0" );
 				Top = value - Height;
+			}
+		}
+
+		protected override bool ShowWithoutActivation {
+			get { return true; }
+		}
+
+		[Flags]
+		private enum Win32 {
+			WsExLayered = 0x00080000,
+			WsExNoactivate = 0x08000000,
+			WsExToolwindow = 0x00000080,
+			WsThickframe = 0x00040000,
+			WsChild = 0x40000000,
+			WsExTopmost = 0x00000008,
+			WsExTransparent = 0x00000020
+		}
+
+		protected override CreateParams CreateParams {
+			[SecurityPermission( SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode )]
+			get {
+				var baseParams = base.CreateParams;				
+				baseParams.ExStyle |= (int)(Win32.WsExNoactivate | Win32.WsExToolwindow | Win32.WsExTopmost );
+				baseParams.Style |= (int)(Win32.WsThickframe);
+				return baseParams;
 			}
 		}
 
@@ -114,7 +140,7 @@ namespace NotificationWindow {
 			};
 		}
 
-		private void CloseForm( int millisecondsToClose = 0 ) {
+		private static void ShutdownMessages( ) {
 			StopTimer( );
 			WithMessageLock( ( ) => {
 				try {
@@ -126,7 +152,16 @@ namespace NotificationWindow {
 				} catch( Exception ex ) {
 					Debug.WriteLine( string.Format( @"Exception while disposing of _messages. {0}", ex.Message ) );
 				}
-			} );
+			} );			
+		}
+
+		private void CloseForm( ) {
+			ShutdownMessages( );
+			Close( );
+		}
+
+		private void CloseForm( int millisecondsToClose ) {
+			ShutdownMessages( );
 			FadeAway( millisecondsToClose );
 			Close( );
 		}

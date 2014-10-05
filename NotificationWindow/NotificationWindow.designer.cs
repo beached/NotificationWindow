@@ -46,27 +46,28 @@
 			this.dgvMessages.ShowCellToolTips = false;
 			this.dgvMessages.ShowEditingIcon = false;
 			this.dgvMessages.ShowRowErrors = false;
-			this.dgvMessages.Size = new System.Drawing.Size(332, 142);
+			this.dgvMessages.Size = new System.Drawing.Size(325, 150);
 			this.dgvMessages.TabIndex = 0;
 			// 
 			// NotificationWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(332, 142);
+			this.ClientSize = new System.Drawing.Size(325, 150);
 			this.ControlBox = false;
 			this.Controls.Add(this.dgvMessages);
 			this.ForeColor = System.Drawing.Color.Black;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
+			this.MaximumSize = new System.Drawing.Size(325, 150);
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(325, 150);
 			this.Name = "NotificationWindow";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "NotificationWindow";
-			this.TopMost = true;
 			this.Load += new System.EventHandler(this.NotificationWindow_Load);
 			this.Shown += new System.EventHandler(this.NotificationWindow_Shown);
 			((System.ComponentModel.ISupportInitialize)(this.dgvMessages)).EndInit();
