@@ -2,12 +2,7 @@
 using System.Windows.Forms;
 
 namespace NotificationWindow {
-	public class Helpers {
-		public class AssertionException: Exception {
-			public AssertionException( ): base( ) { }
-			public AssertionException( string message ) : base( message ) { }
-		}
-
+	public static class Helpers {
 		public static void Assert( bool condition, string messageFormat, params object[] messageValues ) {
 			if( !condition ) {
 				throw new AssertionException( string.Format( messageFormat, messageValues ) );
@@ -24,5 +19,12 @@ namespace NotificationWindow {
 			dgv.Columns.Add( MakeColumn( propertName, headerName, hidden, canSort, readOnly ) );
 		}
 		
-	}	
+	}
+
+	[Serializable]
+	public class AssertionException: Exception {
+		public AssertionException( ) { }
+		public AssertionException( string message ) : base( message ) { }
+	}
+
 }

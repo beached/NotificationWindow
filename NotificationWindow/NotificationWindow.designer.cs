@@ -31,13 +31,22 @@
 			// 
 			this.dgvMessages.AllowUserToAddRows = false;
 			this.dgvMessages.AllowUserToDeleteRows = false;
-			this.dgvMessages.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.dgvMessages.AllowUserToResizeColumns = false;
+			this.dgvMessages.AllowUserToResizeRows = false;
+			this.dgvMessages.BackgroundColor = System.Drawing.SystemColors.Control;
+			this.dgvMessages.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.dgvMessages.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+			this.dgvMessages.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
 			this.dgvMessages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dgvMessages.ColumnHeadersVisible = false;
 			this.dgvMessages.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dgvMessages.Location = new System.Drawing.Point(0, 0);
 			this.dgvMessages.Name = "dgvMessages";
 			this.dgvMessages.ReadOnly = true;
+			this.dgvMessages.ShowCellErrors = false;
+			this.dgvMessages.ShowCellToolTips = false;
+			this.dgvMessages.ShowEditingIcon = false;
+			this.dgvMessages.ShowRowErrors = false;
 			this.dgvMessages.Size = new System.Drawing.Size(332, 142);
 			this.dgvMessages.TabIndex = 0;
 			// 
@@ -45,7 +54,6 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.ClientSize = new System.Drawing.Size(332, 142);
 			this.ControlBox = false;
 			this.Controls.Add(this.dgvMessages);
