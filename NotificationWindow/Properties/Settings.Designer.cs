@@ -25,7 +25,7 @@ namespace NotificationWindow.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Khaki")]
+        [global::System.Configuration.DefaultSettingValueAttribute("PaleGreen")]
         public global::System.Drawing.Color BgColourNormal {
             get {
                 return ((global::System.Drawing.Color)(this["BgColourNormal"]));
@@ -47,6 +47,15 @@ namespace NotificationWindow.Properties {
         public global::System.Drawing.Font MessageFont {
             get {
                 return ((global::System.Drawing.Font)(this["MessageFont"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3000")]
+        public int MessageTimeoutMilliseconds {
+            get {
+                return ((int)(this["MessageTimeoutMilliseconds"]));
             }
         }
     }

@@ -91,13 +91,10 @@ namespace NotificationWindow {
 
 		[Flags]
 		private enum Win32 {
-			WsExLayered = 0x00080000,
 			WsExNoactivate = 0x08000000,
 			WsExToolwindow = 0x00000080,
 			WsThickframe = 0x00040000,
-			WsChild = 0x40000000,
 			WsExTopmost = 0x00000008,
-			WsExTransparent = 0x00000020
 		}
 
 		protected override CreateParams CreateParams {
@@ -247,7 +244,7 @@ namespace NotificationWindow {
 
 		private static void ShouldIStayOpen( object sender, ElapsedEventArgs args ) {
 			OnWindow( window => {
-				if( 0 < CleanMessages( 3 ) ) {
+				if( 0 < CleanupMessages( Properties.Settings.Default.MessageTimeoutMilliseconds ) ) {
 					StartTimer( );
 					return;
 				}
@@ -294,9 +291,9 @@ namespace NotificationWindow {
 			return null != messages && messages.Any( message => NotificationMessage.NotificationType.Error == message.MessageType );
 		}
 
-		private static int CleanMessages( int maxAgeSeconds ) {
+		private static int CleanupMessages( int maxAgeMilliseconds ) {
 			var now = DateTime.Now;
-			WithMessageLock( ( ) => _messages.RemoveAll( message => (now - message.Timestamp).TotalSeconds >= maxAgeSeconds ) );
+			WithMessageLock( ( ) => _messages.RemoveAll( message => (now - message.Timestamp).TotalMilliseconds >= maxAgeMilliseconds ) );
 			OnWindow( window => SetWindowColour( ) );
 			return _messages.Count;
 		}

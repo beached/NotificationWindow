@@ -3,13 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="BgColourNormal" Type="System.Drawing.Color" Scope="Application">
-      <Value Profile="(Default)">Khaki</Value>
+      <Value Profile="(Default)">PaleGreen</Value>
     </Setting>
     <Setting Name="BgColourError" Type="System.Drawing.Color" Scope="Application">
       <Value Profile="(Default)">OrangeRed</Value>
     </Setting>
     <Setting Name="MessageFont" Type="System.Drawing.Font" Scope="Application">
       <Value Profile="(Default)">Microsoft Sans Serif, 14.25pt</Value>
+    </Setting>
+    <Setting Name="MessageTimeoutMilliseconds" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3000</Value>
     </Setting>
   </Settings>
 </SettingsFile>
