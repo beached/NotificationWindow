@@ -34,7 +34,6 @@
 			this.dgvMessages.AllowUserToResizeColumns = false;
 			this.dgvMessages.AllowUserToResizeRows = false;
 			this.dgvMessages.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.dgvMessages.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.dgvMessages.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 			this.dgvMessages.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
 			this.dgvMessages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -78,5 +77,6 @@
 		#endregion
 
 		private System.Windows.Forms.DataGridView dgvMessages;
+
 	}
 }

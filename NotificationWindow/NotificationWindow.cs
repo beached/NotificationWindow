@@ -61,9 +61,10 @@ namespace NotificationWindow {
 			try {
 				CreateWindowIfNeeded( );
 				AddMessageToQueue( messageType, messageFormat, messageValues );
-				OnWindow( window => SetWindowColour( ) );
+				SetWindowColour( );
 			} catch( Exception ex ) {
 				Debug.WriteLine( string.Format( @"Error adding message. {0}", ex.Message ) );
+				OnWindow( window => window.CloseForm( 0 ) );
 			}
 		}
 
