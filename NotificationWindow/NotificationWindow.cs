@@ -131,7 +131,7 @@ namespace NotificationWindow {
 			dgvMessages.AutoGenerateColumns = false;
 			{
 				var column = Helpers.MakeColumn( @"Message" );
-				column.DefaultCellStyle.Font = new Font( FontFamily.GenericSansSerif, 14 );
+				column.DefaultCellStyle.Font = Properties.Settings.Default.MessageFont;
 				column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;				
 				dgvMessages.Columns.Add( column );
 			}
@@ -314,7 +314,7 @@ namespace NotificationWindow {
 		}
 
 		private static void SetWindowColour( ) {
-			SetBackgroundColour( HasErrorMessage( _messages ) ? Color.OrangeRed : Color.Khaki );
+			SetBackgroundColour( HasErrorMessage( _messages ) ? Properties.Settings.Default.BgColourError : Properties.Settings.Default.BgColourNormal );
 			OnWindow( window => window.Refresh( ) );
 			ClearSelection( );
 		}

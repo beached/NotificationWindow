@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NotificationWindow.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="BgColourNormal" Type="System.Drawing.Color" Scope="Application">
+      <Value Profile="(Default)">Khaki</Value>
+    </Setting>
+    <Setting Name="BgColourError" Type="System.Drawing.Color" Scope="Application">
+      <Value Profile="(Default)">OrangeRed</Value>
+    </Setting>
+    <Setting Name="MessageFont" Type="System.Drawing.Font" Scope="Application">
+      <Value Profile="(Default)">Microsoft Sans Serif, 14.25pt</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
