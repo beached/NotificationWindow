@@ -58,5 +58,17 @@ namespace NotificationWindow.Properties {
                 return ((int)(this["MessageTimeoutMilliseconds"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        public int MessagePollEveryMilliseconds {
+            get {
+                return ((int)(this["MessagePollEveryMilliseconds"]));
+            }
+            set {
+                this["MessagePollEveryMilliseconds"] = value;
+            }
+        }
     }
 }

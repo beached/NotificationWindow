@@ -132,10 +132,8 @@ namespace NotificationWindow {
 				column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;				
 				dgvMessages.Columns.Add( column );
 			}
-			dgvMessages.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-			dgvMessages.Click += delegate {		// If use click on window, close
-				InvokeIfNeeded( ( ) => CloseForm( 250 ) );
-			};
+			dgvMessages.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;			
+
 		}
 
 		private static void ShutdownMessages( ) {
@@ -190,6 +188,7 @@ namespace NotificationWindow {
 
 		private void NotificationWindow_Shown( object sender, EventArgs e ) {			
 			StartTimer( );
+			_window.Click += ( obj, arg ) => InvokeIfNeeded( ( ) => CloseForm( 250 ) );
 		}
 
 		private void InvokeIfNeeded( Action action ) {
@@ -237,7 +236,7 @@ namespace NotificationWindow {
 					StartTimer( );
 					return;
 				}
-				window.CloseForm( 1000 );
+				window.CloseForm( Properties.Settings.Default.MessagePollEveryMilliseconds );
 				_window = null;
 			} );
 		}
@@ -258,7 +257,7 @@ namespace NotificationWindow {
 		}
 
 		private static void SetupTimer( ) {
-			_timer = new System.Timers.Timer( 1000 );
+			_timer = new System.Timers.Timer( Properties.Settings.Default.MessagePollEveryMilliseconds );
 			_timer.Elapsed += ShouldIStayOpen;
 		}
 
