@@ -131,10 +131,11 @@ namespace NotificationWindow {
 			dgvMessages.AutoGenerateColumns = false;
 			{
 				var column = Helpers.MakeColumn( @"Message" );
-				column.DefaultCellStyle.Font = new Font( FontFamily.GenericSansSerif, 16 );
+				column.DefaultCellStyle.Font = new Font( FontFamily.GenericSansSerif, 14 );
+				column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;				
 				dgvMessages.Columns.Add( column );
 			}
-
+			dgvMessages.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
 			dgvMessages.Click += delegate {		// If use click on window, close
 				InvokeIfNeeded( ( ) => CloseForm( 250 ) );
 			};
