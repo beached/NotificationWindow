@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace NotificationWindow {
@@ -26,4 +28,13 @@ namespace NotificationWindow {
 		public AssertionException( string message ) : base( message ) { }
 	}
 
+	public static class Extension {
+		public static void RemoveAll<T>( this BindingList<T> values, Predicate<T> predicate ) {
+			for( var n = values.Count - 1; n >= 0; --n ) {
+				if( predicate( values[n] ) ) {
+					values.RemoveAt( n );
+				}
+			}
+		}
+	}
 }

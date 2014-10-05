@@ -1,5 +1,5 @@
-﻿using System.Security.Permissions;
-using SyncList;
+﻿using System.ComponentModel;
+using System.Security.Permissions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,10 +11,9 @@ using System.Windows.Forms;
 
 namespace NotificationWindow {
 	public partial class NotificationWindow: Form {
-		private static SyncList<NotificationMessage> _messages;
+		private static BindingList<NotificationMessage> _messages;
 		private static NotificationWindow _window;
 		private static System.Timers.Timer _timer;
-		private static readonly Object MessagesLock = new object( );
 
 		internal class NotificationMessage {
 			internal enum NotificationType {
@@ -40,9 +39,10 @@ namespace NotificationWindow {
 				SetupDataGridView( );
 
 				if( null == _messages ) {
-					_messages = new SyncList<NotificationMessage>( this );
+					_messages = new BindingList<NotificationMessage>( );
 				}
 				dgvMessages.DataSource = _messages;
+				dgvMessages.ClearSelection( );
 				SetupTimer( );
 			} catch( Exception ex ) {
 				Debug.WriteLine( @"Exception while constructing NotificationWindow. {0}", ex.Message );
@@ -64,8 +64,7 @@ namespace NotificationWindow {
 				AddMessageToQueue( messageType, messageFormat, messageValues );
 				SetWindowColour( );
 			} catch( Exception ex ) {
-				Debug.WriteLine( string.Format( @"Error adding message. {0}", ex.Message ) );
-				OnWindow( window => window.CloseForm( ) );
+				Debug.WriteLine( string.Format( @"Error adding message. {0}", ex.Message ) );				
 			}
 		}
 
@@ -126,6 +125,7 @@ namespace NotificationWindow {
 			dgvMessages.RowHeadersVisible = false;
 			dgvMessages.ColumnHeadersVisible = false;
 			dgvMessages.AutoGenerateColumns = false;
+			dgvMessages.TabStop = false;
 			{
 				var column = Helpers.MakeColumn( @"Message" );
 				column.DefaultCellStyle.Font = Properties.Settings.Default.MessageFont;
@@ -140,7 +140,7 @@ namespace NotificationWindow {
 
 		private static void ShutdownMessages( ) {
 			StopTimer( );
-			WithMessageLock( ( ) => {
+			WithMessage( ( ) => {
 				try {
 					if( null == _messages ) {
 						return;
@@ -194,7 +194,7 @@ namespace NotificationWindow {
 		}
 
 		private void NotificationWindow_Shown( object sender, EventArgs e ) {			
-			StartTimer( );			
+			StartTimer( );
 		}
 
 		private void InvokeIfNeeded( Action action ) {
@@ -212,13 +212,7 @@ namespace NotificationWindow {
 		// Static Methods	
 		private static void AddMessageToQueue( NotificationMessage.NotificationType messageType, string messageFormat, params object[] messageValues ) {
 			var message = string.Format( messageFormat, messageValues );
-			new Thread( ( ) => {
-				WithMessageLock( ( ) => _messages.Add( new NotificationMessage( message, messageType ) ) );
-				OnWindow( delegate {
-					SetWindowColour( );
-					ClearSelection( );
-				} );
-			} ).Start( );
+			new Thread( ( ) => WithMessage( ( ) => _messages.Add( new NotificationMessage( message, messageType ) ) ) ).Start( );
 		}
 
 		private static void CreateWindowIfNeeded( ) {
@@ -253,12 +247,14 @@ namespace NotificationWindow {
 			} );
 		}
 
-		private static void WithMessageLock( Action action ) {
+		private static void WithMessage( Action action ) {
 			var isTimerEnabled = StopTimer( );
 			try {
-				lock( MessagesLock ) {
+				OnWindow( window => {
 					action( );
-				}
+					window.dgvMessages.ClearSelection( );
+					window.dgvMessages.Update( );
+				} );
 			} finally {
 				if( isTimerEnabled ) {
 					StartTimer( );
@@ -293,7 +289,7 @@ namespace NotificationWindow {
 
 		private static int CleanupMessages( int maxAgeMilliseconds ) {
 			var now = DateTime.Now;
-			WithMessageLock( ( ) => _messages.RemoveAll( message => (now - message.Timestamp).TotalMilliseconds >= maxAgeMilliseconds ) );
+			WithMessage( ( ) => _messages.RemoveAll( message => (now - message.Timestamp).TotalMilliseconds >= maxAgeMilliseconds ) );
 			OnWindow( window => SetWindowColour( ) );
 			return _messages.Count;
 		}
@@ -303,11 +299,12 @@ namespace NotificationWindow {
 				window.BackColor = colour;
 				window.dgvMessages.BackColor = colour;
 				window.dgvMessages.DefaultCellStyle.BackColor = colour;
-				window.dgvMessages.RowsDefaultCellStyle.BackColor = colour;
 				window.dgvMessages.BackgroundColor = colour;
+				window.dgvMessages.RowsDefaultCellStyle.BackColor = colour;				
 				window.dgvMessages.DataSource = null;
-				window.dgvMessages.DataSource = _messages;
+				window.dgvMessages.DataSource = _messages;				
 			} );
+			ClearSelection(  );
 		}
 
 		private static void SetWindowColour( ) {
