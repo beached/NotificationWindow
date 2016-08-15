@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Security.Permissions;
 using System;
 using System.Collections.Generic;
